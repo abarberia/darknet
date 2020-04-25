@@ -135,7 +135,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             sprintf(buff, "%s/%s.backup", backup_directory, base);
             save_weights(net, buff);
         }
-        if(i%10000==0 || (i < 1000 && i%100 == 0)){
+        if(i%200==0 || (i < 1000 && i%20 == 0)){
 #ifdef GPU
             if(ngpus != 1) sync_nets(nets, ngpus, 0);
 #endif
@@ -558,6 +558,53 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
     }
 }
 
+void save_bboxes(image im, detection *dets, int n, const char *filename, float thresh, int classes){
+    int i, j;
+    char bbox_x[500] = {0};
+    char bbox_y[500] = {0};
+    char bbox_h[500] = {0};
+    char bbox_w[500] = {0};
+    char bbox_prob[500] = {0};
+    char fname[500] = {0};
+    strcat(fname, filename);
+    strcat(fname, ".txt");
+
+    FILE *fp;
+    fp = fopen(fname, "w");
+
+    for(i = 0; i < n; ++i){
+        char bbox_txt[500] = {0};
+        int class = -1;
+        for(j = 0; j < classes; ++j){
+            if (dets[i].prob[j] > thresh){
+                if (class < 0) {
+                    class = j;
+                }
+            }
+        }
+        if(class >= 0){
+            // printf("Prob %f%%\n", dets[i].prob[class]*100);
+            box b = dets[i].bbox;
+            // printf("Coords (x, y, w, h): %f, %f, %f, %f\n", b.x, b.y, b.w, b.h);
+
+            sprintf(bbox_x, "%f ", b.x);
+            sprintf(bbox_y, "%f ", b.y);
+            sprintf(bbox_w, "%f ", b.w);
+            sprintf(bbox_h, "%f ", b.h);
+            sprintf(bbox_prob, "%f \n", dets[i].prob[class]);
+
+            strcat(bbox_txt, bbox_x);
+            strcat(bbox_txt, bbox_y);
+            strcat(bbox_txt, bbox_w);
+            strcat(bbox_txt, bbox_h);
+            strcat(bbox_txt, bbox_prob);
+
+            fputs(bbox_txt, fp);
+        }
+    }
+    fclose(fp);
+}
+
 
 void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
 {
@@ -602,17 +649,19 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         //if (nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
         draw_detections(im, dets, nboxes, thresh, names, alphabet, l.classes);
-        free_detections(dets, nboxes);
         if(outfile){
             save_image(im, outfile);
+            save_bboxes(im, dets, nboxes, outfile, thresh, l.classes);
         }
         else{
             save_image(im, "predictions");
+            save_bboxes(im, dets, nboxes, "predictions", thresh, l.classes);
 #ifdef OPENCV
             make_window("predictions", 512, 512, 0);
             show_image(im, "predictions", 0);
 #endif
         }
+        free_detections(dets, nboxes);
 
         free_image(im);
         free_image(sized);
