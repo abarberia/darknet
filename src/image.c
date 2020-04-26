@@ -280,10 +280,10 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
             box b = dets[i].bbox;
             //printf("%f %f %f %f\n", b.x, b.y, b.w, b.h);
 
-            int left  = (b.x-b.w/2.)*im.w;
-            int right = (b.x+b.w/2.)*im.w;
-            int top   = (b.y-b.h/2.)*im.h;
-            int bot   = (b.y+b.h/2.)*im.h;
+            int left  = (b.x-b.w/4.)*im.w;
+            int right = (b.x+b.w/4.)*im.w;
+            int top   = (b.y-b.h/4.)*im.h;
+            int bot   = (b.y+b.h/4.)*im.h;
 
             if(left < 0) left = 0;
             if(right > im.w-1) right = im.w-1;
