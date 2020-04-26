@@ -1,8 +1,12 @@
 #!/bin/bash
 
+
+#!/bin/bash
+
 usage()
 {
-    echo "usage: sysinfo_page [[[-f file ] [-w weights] [-i]] | [-h]]"
+    echo "usage: sysinfo_page [-w weights] | [-h help]"
+    echo "\t[-w --weights]:\t DNN weights used. Default is 'weights/size_360.weights'."
 }
 
 weights="weights/size_360.weights"
