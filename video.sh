@@ -30,8 +30,4 @@ while [ "$#" != 0 ]; do
 	esac
 done
 
-echo $video
-echo $weights
-echo $output
-
 ./darknet detector demo obj.data cfg/obj_test.cfg $weights $video -dont_show -out $output
