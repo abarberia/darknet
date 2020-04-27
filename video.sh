@@ -2,7 +2,7 @@
 
 usage()
 {
-    echo "usage: sysinfo_page [-v video] [-w weights] [-o output]" 
+    echo "usage: video.sh [-v video] [-w weights] [-o output]" 
     echo "\t[-v --video ]:\t Name of video file to process. Default is '../data/video.avi'."
     echo "\t[-w --weights]:\t DNN weights used. Default is 'weights/size_360.weights'."
     echo "\t[-o --output]:\t Name of output file. Default is '../data/processed_video.avi'"

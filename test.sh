@@ -2,7 +2,7 @@
 
 usage()
 {
-    echo "usage: sysinfo_page [-w weights] | [-h help]" 
+    echo "usage: test.sh [-w weights] | [-h help]" 
     echo "\t[-w --weights]:\t DNN weights used. Default is 'weights/size_360.weights'."
 }
 
